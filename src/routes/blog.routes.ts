@@ -1,13 +1,27 @@
 import { Router } from "express";
-import { createBlog, getAllBlogs } from "../controllers/blog.controller";
+import {
+  createBlog,
+  getAllBlogs,
+  getBlogById,
+  updateBlog,
+  deleteBlog
+} from "../controllers/blog.controller";
 
-// Router is a mini Express application
 const router = Router();
 
-// POST /api/blogs
+// Create
 router.post("/", createBlog);
 
-// GET /api/blogs
+// Read all
 router.get("/", getAllBlogs);
+
+// Read one
+router.get("/:id", getBlogById);
+
+// Update
+router.put("/:id", updateBlog);
+
+// Delete
+router.delete("/:id", deleteBlog);
 
 export default router;
