@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db";
 import blogRoutes from "./routes/blog.routes";
+import cors from "cors";
 
 // Loads environment variables from .env file
 dotenv.config();
@@ -14,6 +15,13 @@ const app: Application = express();
 // Parses incoming JSON requests
 // Required for req.body to work
 app.use(express.json());
+
+// to aloow cross-origin requests from the frontend (next.js) to the backend (express   )
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+   credentials: true,
+}));
+
 
 /* ================= DATABASE ================= */
 
