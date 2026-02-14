@@ -17,11 +17,12 @@ const app: Application = express();
 app.use(express.json());
 
 // to aloow cross-origin requests from the frontend (next.js) to the backend (express   )
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-   credentials: true,
-}));
-
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  }),
+);
 
 /* ================= DATABASE ================= */
 
