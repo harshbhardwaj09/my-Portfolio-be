@@ -15,10 +15,8 @@ export const getAllBlogs = async (req: Request, res: Response) => {
 
   const skip = (page - 1) * limit;
 
-  const blogs = await Blog.find()
-    .skip(skip)
-    .limit(limit);
-  const blogsResult={...blogs, total: await Blog.countDocuments()}
+  const blogs = await Blog.find().skip(skip).limit(limit);
+  const blogsResult = { blogs, total: await Blog.countDocuments() };
 
   return res.json(blogsResult);
 };
@@ -33,12 +31,12 @@ export const getBlogById = async (req: Request, res: Response) => {
 };
 export const updateBlog = async (req: Request, res: Response) => {
   const updatedBlog = await Blog.findByIdAndUpdate(
-    req.params.id,   // Which blog
-    req.body,        // What to update
+    req.params.id, // Which blog
+    req.body, // What to update
     {
-      new: true,         // return updated data
-      runValidators: true // apply schema rules
-    }
+      new: true, // return updated data
+      runValidators: true, // apply schema rules
+    },
   );
 
   return res.json(updatedBlog);

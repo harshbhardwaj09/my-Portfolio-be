@@ -4,7 +4,7 @@ import {
   getAllBlogs,
   getBlogById,
   updateBlog,
-  deleteBlog
+  deleteBlog,
 } from "../controllers/blog.controller";
 
 const router = Router();

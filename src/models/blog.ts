@@ -16,29 +16,29 @@ const blogSchema: Schema<IBlog> = new Schema(
       type: String,
       required: true,
       trim: true,
-      minlength: 5
+      minlength: 5,
     },
     content: {
       type: String,
-      required: true
+      required: true,
     },
     author: {
       type: String,
-      default: "Admin"
+      default: "Admin",
     },
     isPublished: {
       type: Boolean,
-      default: false
+      default: false,
     },
     tags: {
       type: [String],
-      default: []
-    }
+      default: [],
+    },
   },
   {
     timestamps: true,
-    versionKey: false
-  }
+    versionKey: false,
+  },
 );
 
 /* Runs BEFORE saving document */
