@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { upload } from "../middlewares/upload";
 import {
   createBlog,
   getAllBlogs,
@@ -10,8 +11,7 @@ import {
 const router = Router();
 
 // Create
-router.post("/", createBlog);
-
+router.post("/", upload.single("coverImage"), createBlog);
 // Read all
 router.get("/", getAllBlogs);
 
