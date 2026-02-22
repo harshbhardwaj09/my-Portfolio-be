@@ -1,12 +1,9 @@
 import express, { Application } from "express";
-import dotenv from "dotenv";
 import connectDB from "./config/db";
 import blogRoutes from "./routes/blog.routes";
 import cors from "cors";
 
 // Loads environment variables from .env file
-dotenv.config();
-
 // Creates an Express application instance
 const app: Application = express();
 

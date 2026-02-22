@@ -1,6 +1,6 @@
 // index.ts is the ENTRY POINT of the application
 // Node.js executes this file first
-
+import "dotenv/config";
 import app from "./src/app";
 
 // PORT is read from environment variables

@@ -2,11 +2,35 @@ import { Request, Response } from "express";
 import Blog from "../models/blog";
 
 /* CREATE BLOG */
-export const createBlog = async (req: Request, res: Response) => {
-  // req.body = data sent by client
-  const blog = await Blog.create(req.body);
+import cloudinary from "../config/cloudinary";
 
-  // Send created blog back
+export const createBlog = async (req: Request, res: Response) => {
+  const { title, content } = req.body;
+
+  let coverImage = "";
+
+  if (req.file) {
+    const result = await new Promise<any>((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "blogs" },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        },
+      );
+
+      stream.end(req.file?.buffer);
+    });
+
+    coverImage = result.secure_url;
+  }
+
+  const blog = await Blog.create({
+    title,
+    content,
+    coverImage,
+  });
+
   return res.status(201).json(blog);
 };
 export const getAllBlogs = async (req: Request, res: Response) => {

@@ -4,6 +4,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IBlog extends Document {
   title: string;
   content: string;
+  coverImage: string;
   author: string;
   isPublished: boolean;
   tags: string[];
@@ -17,6 +18,10 @@ const blogSchema: Schema<IBlog> = new Schema(
       required: true,
       trim: true,
       minlength: 5,
+    },
+    coverImage: {
+      type: String,
+      default: "",
     },
     content: {
       type: String,
