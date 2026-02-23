@@ -3,6 +3,7 @@ import Blog from "../models/blog";
 
 /* CREATE BLOG */
 import cloudinary from "../config/cloudinary";
+import { UploadApiResponse } from "cloudinary";
 
 export const createBlog = async (req: Request, res: Response) => {
   const { title, content } = req.body;
@@ -10,19 +11,21 @@ export const createBlog = async (req: Request, res: Response) => {
   let coverImage = "";
 
   if (req.file) {
-    const result = await new Promise<any>((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        { folder: "blogs" },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        },
-      );
+    const result = await new Promise<UploadApiResponse | undefined>(
+      (resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "blogs" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          },
+        );
 
-      stream.end(req.file?.buffer);
-    });
+        stream.end(req.file?.buffer);
+      },
+    );
 
-    coverImage = result.secure_url;
+    coverImage = result?.secure_url || "";
   }
 
   const blog = await Blog.create({
