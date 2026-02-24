@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "dev": "nodemon --watch src --exec ts-node src/index.ts",
-    "start": "ts-node src/index.ts",
+    "dev": "nodemon --watch src --exec ts-node index.ts",
+    "start": "node dist/index.js",
     "format": "prettier --write .",
-    "build": "tsc",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix",
-    "check-types": "tsc --noEmit"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "check-types": "tsc --noEmit",
+    "build": "tsc"
   },
   "dependencies": {
     "cloudinary": "^2.9.0",
@@ -25,7 +25,8 @@
     "@types/express": "^4.17.21",
     "@types/multer": "^1.4.7",
     "@types/node": "^20.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.56.0",
+      "@eslint/js": "^10.0.1",
+        "@typescript-eslint/eslint-plugin": "^8.56.0",
     "@typescript-eslint/parser": "^8.56.0",
     "eslint": "^10.0.1",
     "eslint-config-prettier": "^10.1.8",
@@ -33,6 +34,6 @@
     "prettier": "^3.8.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.0.0",
-    "typescript-eslint": "^8.56.0"
+     "typescript-eslint": "^8.56.0"
   }
 }
