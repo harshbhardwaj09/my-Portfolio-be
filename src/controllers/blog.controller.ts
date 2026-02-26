@@ -6,36 +6,63 @@ import cloudinary from "../config/cloudinary";
 import { UploadApiResponse } from "cloudinary";
 
 export const createBlog = async (req: Request, res: Response) => {
-  const { title, content } = req.body;
+  const { title, content, author, tags } = req.body;
 
   let coverImage = "";
+  let imageUrls: string[] = [];
 
-  if (req.file) {
-    const result = await new Promise<UploadApiResponse | undefined>(
-      (resolve, reject) => {
+  const files = req.files as {
+    [fieldname: string]: Express.Multer.File[];
+  };
+
+  // 🔥 Cover Image Upload
+  if (files?.coverImage?.[0]) {
+    const result = await new Promise<any>((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "blogs/covers" },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        },
+      );
+
+      stream.end(files.coverImage[0].buffer);
+    });
+
+    coverImage = result.secure_url;
+  }
+
+  // 🔥 Multiple Images Upload
+  if (files?.images?.length) {
+    for (const file of files.images) {
+      const result = await new Promise<any>((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
-          { folder: "blogs" },
+          { folder: "blogs/images" },
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
           },
         );
 
-        stream.end(req.file?.buffer);
-      },
-    );
+        stream.end(file.buffer);
+      });
 
-    coverImage = result?.secure_url || "";
+      imageUrls.push(result.secure_url);
+    }
   }
 
   const blog = await Blog.create({
     title,
     content,
     coverImage,
+    images: imageUrls,
+    author,
+    tags,
   });
 
   return res.status(201).json(blog);
 };
+
 export const getAllBlogs = async (req: Request, res: Response) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
