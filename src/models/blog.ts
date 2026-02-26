@@ -5,6 +5,7 @@ export interface IBlog extends Document {
   title: string;
   content: string;
   coverImage: string;
+  images: string[];
   author: string;
   isPublished: boolean;
   tags: string[];
@@ -22,6 +23,10 @@ const blogSchema: Schema<IBlog> = new Schema(
     coverImage: {
       type: String,
       default: "",
+    },
+    images: {
+      type: [String],
+      default: [],
     },
     content: {
       type: String,

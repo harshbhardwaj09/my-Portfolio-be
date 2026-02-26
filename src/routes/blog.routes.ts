@@ -11,7 +11,15 @@ import {
 const router = Router();
 
 // Create
-router.post("/", upload.single("coverImage"), createBlog);
+router.post(
+  "/",
+  upload.fields([
+    { name: "coverImage", maxCount: 1 },
+    { name: "images", maxCount: 10 },
+  ]),
+  createBlog,
+);
+// router.post("/", upload.single("coverImage"), createBlog);
 // Read all
 router.get("/", getAllBlogs);
 
