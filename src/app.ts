@@ -17,7 +17,7 @@ app.use(express.json());
 // to aloow cross-origin requests from the frontend (next.js) to the backend (express   )
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin:[process.env.CLIENT_URL as string, "http://localhost:3000"],
     credentials: true,
   }),
 );
