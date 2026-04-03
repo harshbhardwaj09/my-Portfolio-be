@@ -9,8 +9,11 @@ const normalizeCount = (value: unknown) =>
   typeof value === "number" && Number.isFinite(value) ? value : getRandomCounter();
 
 const ensureBlogCounters = async (blog: any) => {
-  const viewCount = normalizeCount(blog.viewCount);
-  const likeCount = normalizeCount(blog.likeCount);
+  const hasLike = typeof blog.likeCount === "number" && Number.isFinite(blog.likeCount);
+  const hasView = typeof blog.viewCount === "number" && Number.isFinite(blog.viewCount);
+
+  const likeCount = hasLike ? blog.likeCount : normalizeCount(undefined);
+  const viewCount = hasView ? blog.viewCount : likeCount + 1;
 
   if (blog.viewCount !== viewCount || blog.likeCount !== likeCount) {
     await blog.updateOne({ viewCount, likeCount });
