@@ -127,3 +127,22 @@ export const likeBlog = async (req: Request, res: Response) => {
 
   return res.json({ viewCount: blog.viewCount, likeCount: blog.likeCount });
 };
+
+export const unlikeBlog = async (req: Request, res: Response) => {
+  const existing = await Blog.findById(req.params.id);
+
+  if (!existing) {
+    return res.status(404).json({ message: "Blog not found" });
+  }
+
+  const blog = await Blog.findByIdAndUpdate(
+    req.params.id,
+    { $inc: { likeCount: existing.likeCount > 0 ? -1 : 0 } },
+    { new: true },
+  );
+
+  return res.json({
+    viewCount: blog?.viewCount ?? existing.viewCount,
+    likeCount: blog?.likeCount ?? existing.likeCount,
+  });
+};
