@@ -99,3 +99,31 @@ export const deleteBlog = async (req: Request, res: Response) => {
   await Blog.findByIdAndDelete(req.params.id);
   return res.status(204).send();
 };
+
+export const incrementBlogRead = async (req: Request, res: Response) => {
+  const blog = await Blog.findByIdAndUpdate(
+    req.params.id,
+    { $inc: { viewCount: 1 } },
+    { new: true },
+  );
+
+  if (!blog) {
+    return res.status(404).json({ message: "Blog not found" });
+  }
+
+  return res.json({ viewCount: blog.viewCount, likeCount: blog.likeCount });
+};
+
+export const likeBlog = async (req: Request, res: Response) => {
+  const blog = await Blog.findByIdAndUpdate(
+    req.params.id,
+    { $inc: { likeCount: 1 } },
+    { new: true },
+  );
+
+  if (!blog) {
+    return res.status(404).json({ message: "Blog not found" });
+  }
+
+  return res.json({ viewCount: blog.viewCount, likeCount: blog.likeCount });
+};
