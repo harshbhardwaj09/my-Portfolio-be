@@ -1,5 +1,10 @@
 import mongoose, { Schema, Document } from "mongoose";
 
+const DEFAULT_COUNTER_SEED = [3, 5, 4] as const;
+
+const getRandomSeed = () =>
+  DEFAULT_COUNTER_SEED[Math.floor(Math.random() * DEFAULT_COUNTER_SEED.length)];
+
 // Shape of blog document
 export interface IBlog extends Document {
   title: string;
@@ -48,11 +53,11 @@ const blogSchema: Schema<IBlog> = new Schema(
     },
     viewCount: {
       type: Number,
-      default: 0,
+      default: getRandomSeed,
     },
     likeCount: {
       type: Number,
-      default: 0,
+      default: getRandomSeed,
     },
   },
   {
