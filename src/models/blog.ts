@@ -9,6 +9,8 @@ export interface IBlog extends Document {
   author: string;
   isPublished: boolean;
   tags: string[];
+  viewCount: number;
+  likeCount: number;
 }
 
 // Schema = rules for data
@@ -43,6 +45,14 @@ const blogSchema: Schema<IBlog> = new Schema(
     tags: {
       type: [String],
       default: [],
+    },
+    viewCount: {
+      type: Number,
+      default: 0,
+    },
+    likeCount: {
+      type: Number,
+      default: 0,
     },
   },
   {

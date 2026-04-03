@@ -6,6 +6,8 @@ import {
   getBlogById,
   updateBlog,
   deleteBlog,
+  incrementBlogRead,
+  likeBlog,
 } from "../controllers/blog.controller";
 
 const router = Router();
@@ -25,6 +27,10 @@ router.get("/", getAllBlogs);
 
 // Read one
 router.get("/:id", getBlogById);
+
+// Engagement
+router.post("/:id/read", incrementBlogRead);
+router.post("/:id/like", likeBlog);
 
 // Update
 router.put("/:id", updateBlog);
