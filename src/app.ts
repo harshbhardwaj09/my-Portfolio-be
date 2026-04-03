@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import connectDB from "./config/db";
 import blogRoutes from "./routes/blog.routes";
 import contactRoutes from "./routes/contact.routes";
+import analyticsRoutes from "./routes/analytics.routes";
 import cors from "cors";
 
 // Loads environment variables from .env file
@@ -32,5 +33,6 @@ connectDB();
 // All blog-related routes start with /api/blogs
 app.use("/api/blogs", blogRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 export default app;
