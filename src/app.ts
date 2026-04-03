@@ -15,13 +15,33 @@ const app: Application = express();
 // Required for req.body to work
 app.use(express.json());
 
-// to aloow cross-origin requests from the frontend (next.js) to the backend (express   )
-app.use(
-  cors({
-    origin:[process.env.CLIENT_URL as string, "http://localhost:3000"],
-    credentials: true,
-  }),
-);
+// Allow requests from local frontend and deployed frontend.
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:3000",
+  "https://my-portfolio-harsh-bhardwaj.vercel.app",
+].filter(Boolean) as string[];
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    // Allow server-to-server or non-browser requests.
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("Not allowed by CORS"));
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 /* ================= DATABASE ================= */
 

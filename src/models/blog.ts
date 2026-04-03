@@ -53,11 +53,11 @@ const blogSchema: Schema<IBlog> = new Schema(
     },
     viewCount: {
       type: Number,
-      default: getRandomSeed,
+      default: undefined,
     },
     likeCount: {
       type: Number,
-      default: getRandomSeed,
+      default: undefined,
     },
   },
   {
@@ -70,6 +70,20 @@ const blogSchema: Schema<IBlog> = new Schema(
 blogSchema.pre("save", function (next) {
   // Remove extra spaces from title
   this.title = this.title.trim();
+
+  // Seed counters if not present: default views should be likes + 1.
+  const hasLike = typeof this.likeCount === "number" && Number.isFinite(this.likeCount);
+  const hasView = typeof this.viewCount === "number" && Number.isFinite(this.viewCount);
+
+  if (!hasLike && !hasView) {
+    const seed = getRandomSeed();
+    this.likeCount = seed;
+    this.viewCount = seed + 1;
+  } else if (!hasLike && hasView) {
+    this.likeCount = Math.max(0, this.viewCount - 1);
+  } else if (hasLike && !hasView) {
+    this.viewCount = this.likeCount + 1;
+  }
 
   // Tell MongoDB: continue saving
   next();
