@@ -24,12 +24,49 @@ const ensureBlogCounters = async (blog: any) => {
   return { viewCount, likeCount };
 };
 
+const normalizeTags = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => String(item).trim())
+      .filter(Boolean);
+  }
+
+  if (typeof value !== "string") {
+    return [];
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) return [];
+
+  // Accept JSON-like array string, e.g. '["a","b"]' or '[a,b]'
+  if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+    const inner = trimmed.slice(1, -1).trim();
+    if (!inner) return [];
+
+    return inner
+      .split(",")
+      .map((tag) => tag.trim().replace(/^['\"]|['\"]$/g, ""))
+      .filter(Boolean);
+  }
+
+  // Fallback: comma-separated string
+  if (trimmed.includes(",")) {
+    return trimmed
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+  }
+
+  return [trimmed];
+};
+
 /* CREATE BLOG */
 import cloudinary from "../config/cloudinary";
 import { UploadApiResponse } from "cloudinary";
 
 export const createBlog = async (req: Request, res: Response) => {
   const { title, content, author, tags } = req.body;
+  const normalizedTags = normalizeTags(tags);
 
   let coverImage = "";
   let imageUrls: string[] = [];
@@ -80,7 +117,7 @@ export const createBlog = async (req: Request, res: Response) => {
     coverImage,
     images: imageUrls,
     author,
-    tags,
+    tags: normalizedTags,
   });
 
   return res.status(201).json(blog);
@@ -92,7 +129,10 @@ export const getAllBlogs = async (req: Request, res: Response) => {
 
   const skip = (page - 1) * limit;
 
-  const blogs = await Blog.find().skip(skip).limit(limit);
+  const blogs = await Blog.find()
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
 
   await Promise.all(blogs.map((blog) => ensureBlogCounters(blog)));
 
@@ -112,9 +152,15 @@ export const getBlogById = async (req: Request, res: Response) => {
   return res.json(blog);
 };
 export const updateBlog = async (req: Request, res: Response) => {
+  const payload = { ...req.body };
+
+  if (Object.prototype.hasOwnProperty.call(payload, "tags")) {
+    payload.tags = normalizeTags(payload.tags);
+  }
+
   const updatedBlog = await Blog.findByIdAndUpdate(
     req.params.id, // Which blog
-    req.body, // What to update
+    payload, // What to update
     {
       new: true, // return updated data
       runValidators: true, // apply schema rules
