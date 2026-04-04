@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { upload } from "../middlewares/upload";
+import { requireBlogWriteToken } from "../middlewares/auth";
 import {
+  generateBlogWriteToken,
   createBlog,
   getAllBlogs,
   getBlogById,
@@ -13,9 +15,13 @@ import {
 
 const router = Router();
 
+// Generate write token (30 minutes)
+router.post("/token", generateBlogWriteToken);
+
 // Create
 router.post(
   "/",
+  requireBlogWriteToken,
   upload.fields([
     { name: "coverImage", maxCount: 1 },
     { name: "images", maxCount: 10 },
@@ -35,9 +41,9 @@ router.post("/:id/like", likeBlog);
 router.post("/:id/unlike", unlikeBlog);
 
 // Update
-router.put("/:id", updateBlog);
+router.put("/:id", requireBlogWriteToken, updateBlog);
 
 // Delete
-router.delete("/:id", deleteBlog);
+router.delete("/:id", requireBlogWriteToken, deleteBlog);
 
 export default router;

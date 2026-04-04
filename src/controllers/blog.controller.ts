@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import Blog from "../models/blog";
 
 const COUNTER_SEED = [3, 5, 4] as const;
@@ -63,6 +64,32 @@ const normalizeTags = (value: unknown): string[] => {
 /* CREATE BLOG */
 import cloudinary from "../config/cloudinary";
 import { UploadApiResponse } from "cloudinary";
+
+export const generateBlogWriteToken = async (req: Request, res: Response) => {
+  const issueKey = process.env.BLOG_TOKEN_ISSUE_KEY;
+  const tokenSecret = process.env.BLOG_TOKEN_SECRET;
+  const providedKey = req.headers["x-issue-key"] || req.body.issueKey;
+
+  if (!issueKey || !tokenSecret) {
+    return res.status(500).json({
+      message: "Server configuration error: BLOG_TOKEN_ISSUE_KEY or BLOG_TOKEN_SECRET missing",
+    });
+  }
+
+  if (providedKey !== issueKey) {
+    return res.status(401).json({ message: "Unauthorized: invalid issue key" });
+  }
+
+  const token = jwt.sign({ scope: "blog:write" }, tokenSecret, {
+    expiresIn: "30m",
+  });
+
+  return res.json({
+    token,
+    tokenType: "Bearer",
+    expiresIn: 1800,
+  });
+};
 
 export const createBlog = async (req: Request, res: Response) => {
   const { title, content, author, tags } = req.body;
